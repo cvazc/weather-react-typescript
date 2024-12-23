@@ -2,13 +2,13 @@ import { useState, ChangeEvent, FormEvent } from "react"
 import type { SearchType } from "../../types"
 import { countries } from "../../data/countries"
 import styles from "./Form.module.css"
-import Alert from "./Alert/Alert"
- 
+import Alert from "../Alert/Alert"
+
 type FormProps = {
-    fetchWeather : (search: SearchType) => Promise<void>
+    fetchWeather: (search: SearchType) => Promise<void>
 }
 
-export default function Form({fetchWeather} : FormProps) {
+export default function Form({ fetchWeather }: FormProps) {
     const [search, setSearch] = useState<SearchType>({
         city: "",
         country: "",
