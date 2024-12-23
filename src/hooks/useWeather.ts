@@ -1,14 +1,36 @@
 import axios from "axios"
-import { SearchType } from "../types"
+import { SearchType, Weather } from "../types"
+
+function isWeatherResponse(weather: unknown): weather is Weather {
+    return (
+        Boolean(weather) &&
+        typeof weather === "object" &&
+        typeof (weather as Weather).name === "string" &&
+        typeof (weather as Weather).main.temp === "number" &&
+        typeof (weather as Weather).main.temp_max === "number" &&
+        typeof (weather as Weather).main.temp_min === "number"
+    )
+}
 
 export default function useWeather() {
     const fetchWeather = async (search: SearchType) => {
-        const appId = '2aabc7e3bd6ef9d82f174f9d0a53d1c6'
+        const appId = import.meta.env.VITE_API_KEY
         try {
             const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${search.city},${search.country}&appid=${appId}`
 
-            const {data} = await axios(geoURL)
+            const { data } = await axios(geoURL)
+            const lat = data[0].lat
+            const lon = data[0].lon
 
+            const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appId}`
+
+            const { data: weatherResult } = await axios(weatherURL)
+            const result = isWeatherResponse(weatherResult)
+            if (result) {
+                console.log(weatherResult.name)
+            } else {
+                console.log('Error')
+            }
         } catch (error) {
             console.log(error)
         }
